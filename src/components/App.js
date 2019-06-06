@@ -10,10 +10,12 @@ class App extends Component{
     this.state = {
       defaultSearch: 'Trending',
       search: '',
-      searchResults: {}
+      searchResults: {},
+      randomSearch: '',
+      random: false
     }
 
-    axios.get('http://api.giphy.com/v1/gifs/trending?api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB')
+    axios.get('http://api.giphy.com/v1/gifs/trending?api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB&limit=24')
       .then(response => {
         let searchResults = response.data.data;
         this.setState({searchResults});
@@ -23,6 +25,7 @@ class App extends Component{
       })
 
     this.getSearch = this.getSearch.bind(this);
+    this.getRandom = this.getRandom.bind(this);
   }
 
   handleSearchInput = (e) => {
@@ -32,12 +35,23 @@ class App extends Component{
   getSearch = (event) => {
     let search = this.state.search;
     search = search.toString();
-    console.log(search);
-    console.log('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB');
-    axios.get('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB')
+    axios.get('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB&limit=24')
       .then(response => {
         let searchResults = response.data.data;
-        this.setState({searchResults});
+        let random = false;
+        this.setState({searchResults, random});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
+  getRandom = (event) => {
+    axios.get('http://api.giphy.com/v1/gifs/random?api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB')
+      .then(response => {
+        let randomSearch = response.data.data.images.original.webp;
+        let random = true;
+        this.setState({randomSearch, random});
       })
       .catch(err => {
         console.log(err);
@@ -59,6 +73,23 @@ class App extends Component{
       table.push(<Gifs gif={gif} />);
     }
 
+    if(this.state.random){
+      return(
+        <div className="App">
+          <header className="App-header">
+            <h1> Search GIPHY </h1>
+            <div className="ui icon input">
+              <input type="text" placeholder="Search..." onChange={this.handleSearchInput}/>
+              <i className="inverted circular search link icon" onClick={this.getSearch}></i>
+            </div>
+            <button className="ui button" onClick={this.getRandom}> Random Gif </button>
+            <h1> Currently Searching: Random Gif </h1>
+            <Gifs gif={this.state.randomSearch} />
+          </header>
+        </div>
+      );
+    }
+
     return (
       <div className="App">
         <header className="App-header">
@@ -67,8 +98,11 @@ class App extends Component{
             <input type="text" placeholder="Search..." onChange={this.handleSearchInput}/>
             <i className="inverted circular search link icon" onClick={this.getSearch}></i>
           </div>
-          <h1> Currently Searching: {this.putSearch()} </h1>
-          {table}
+          <button className="ui button" onClick={this.getRandom}> Random Gif </button>
+          <h1> Currently Searching (Press The Search Icon to Begin Search): {this.putSearch()} </h1>
+          <div className="ui grid container" style={{marginBottom: '3%'}}>
+            {table}
+          </div>
         </header>
       </div>
     );
