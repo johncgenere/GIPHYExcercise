@@ -8,7 +8,8 @@ class App extends Component{
     super(props);
 
     this.state = {
-      search: 'Trending',
+      defaultSearch: 'Trending',
+      search: '',
       searchResults: {}
     }
 
@@ -20,6 +21,33 @@ class App extends Component{
       .catch(err => {
         console.log(err);
       })
+
+    this.getSearch = this.getSearch.bind(this);
+  }
+
+  handleSearchInput = (e) => {
+    this.setState({search: e.target.value});
+  }
+
+  getSearch = (event) => {
+    let search = this.state.search;
+    search = search.toString();
+    console.log(search);
+    console.log('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB');
+    axios.get('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB')
+      .then(response => {
+        let searchResults = response.data.data;
+        this.setState({searchResults});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
+  putSearch = () => {
+    if(this.state.search !== '')
+      return this.state.search;
+    return this.state.defaultSearch;
   }
 
   render(){
@@ -28,7 +56,6 @@ class App extends Component{
     for(let i = 0; i < this.state.searchResults.length; i++){
       let currImage = this.state.searchResults[i];
       let gif = (currImage.images.original.webp);
-      console.log(gif);
       table.push(<Gifs gif={gif} />);
     }
 
@@ -37,9 +64,10 @@ class App extends Component{
         <header className="App-header">
           <h1> Search GIPHY </h1>
           <div className="ui icon input">
-            <input type="text" placeholder="Search..." />
-            <i className="inverted circular search link icon"></i>
+            <input type="text" placeholder="Search..." onChange={this.handleSearchInput}/>
+            <i className="inverted circular search link icon" onClick={this.getSearch}></i>
           </div>
+          <h1> Currently Searching: {this.putSearch()} </h1>
           {table}
         </header>
       </div>
