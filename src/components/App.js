@@ -19,7 +19,8 @@ class App extends Component{
         pg: {},
         pg13: {},
         r: {}
-      }
+      },
+      selectValue: ''
     }
 
     axios.get('http://api.giphy.com/v1/gifs/trending?api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB&limit=24')
@@ -34,6 +35,11 @@ class App extends Component{
     this.getSearch = this.getSearch.bind(this);
     this.getRandom = this.getRandom.bind(this);
     this.setRatings = this.setRatings.bind(this);
+    this.handleValueChange = this.handleValueChange.bind(this);
+  }
+
+  handleValueChange = (e) => {
+    this.setState({selectValue:e.target.value});
   }
 
   handleSearchInput = (e) => {
@@ -150,7 +156,9 @@ class App extends Component{
             <i className="inverted circular search link icon" onClick={this.getSearch}></i>
           </div>
           <button className="ui button" onClick={this.getRandom}> Random Gif </button>
-          <select className="ui dropdown">
+          <select className="ui dropdown"
+                  value={this.state.selectValue}
+                  onChange={this.handleValueChange} >
             <option value="">Select Rating</option>
             <option value="y">Y</option>
             <option value="g">G</option>
