@@ -12,7 +12,14 @@ class App extends Component{
       search: '',
       searchResults: {},
       randomSearch: '',
-      random: false
+      random: false,
+      ratings: {
+        y: {},
+        g: {},
+        pg: {},
+        pg13: {},
+        r: {}
+      }
     }
 
     axios.get('http://api.giphy.com/v1/gifs/trending?api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB&limit=24')
@@ -26,6 +33,7 @@ class App extends Component{
 
     this.getSearch = this.getSearch.bind(this);
     this.getRandom = this.getRandom.bind(this);
+    this.setRatings = this.setRatings.bind(this);
   }
 
   handleSearchInput = (e) => {
@@ -64,6 +72,49 @@ class App extends Component{
     return this.state.defaultSearch;
   }
 
+  setRatings = () => {
+    let allY = [];
+    let allG = [];
+    let allPG = [];
+    let allPG13 = [];
+    let allR = [];
+
+    for(let i = 0; i < this.state.searchResults.length; i++){
+      let currImage = this.state.searchResults[i];
+
+      switch (currImage.rating) {
+        case 'y':
+          allY.push(currImage);
+          break;
+        case 'g':
+          allG.push(currImage);
+          break;
+        case 'pg':
+          allPG.push(currImage);
+          break;
+        case 'pg-13':
+          allPG13.push(currImage);
+          break;
+        case 'r':
+          allR.push(currImage);
+          break;
+        default:
+          break;
+      }
+    }
+
+    let newRatings = {
+      y: allY,
+      g: allG,
+      pg: allPG,
+      pg13: allPG13,
+      r: allR
+    }
+
+    this.setState({ratings: newRatings});
+    console.log(newRatings);
+  }
+
   render(){
     let table = [];
 
@@ -99,6 +150,15 @@ class App extends Component{
             <i className="inverted circular search link icon" onClick={this.getSearch}></i>
           </div>
           <button className="ui button" onClick={this.getRandom}> Random Gif </button>
+          <select className="ui dropdown">
+            <option value="">Select Rating</option>
+            <option value="y">Y</option>
+            <option value="g">G</option>
+            <option value="pg">PG</option>
+            <option value="pg13">PG-13</option>
+            <option value="r">R</option>
+          </select>
+          <button className="ui button" onClick={this.setRatings}> Filter </button>
           <h1> Currently Searching (Press The Search Icon to Begin Search): {this.putSearch()} </h1>
           <div className="ui grid container" style={{marginBottom: '3%'}}>
             {table}
