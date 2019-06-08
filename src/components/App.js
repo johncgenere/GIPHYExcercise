@@ -42,7 +42,6 @@ class App extends Component{
   onSearchGiphy = (event) => {
     let selectValue = '';
     let random = false;
-    console.log('gif');
     this.setState({selectValue, random});
   }
 
@@ -148,13 +147,11 @@ class App extends Component{
 
   render(){
     let table = [];
-    console.log(this.state.ratings);
 
     switch (this.state.selectValue) {
       case 'y':
         let y = this.state.ratings.y;
         for(let i = 0; i < y.length; i++){
-          console.log(y[i]);
           let gif = y[i].images.original.webp;
           table.push(<Gifs gif={gif} />);
         }
@@ -162,7 +159,6 @@ class App extends Component{
       case 'g':
         let g = this.state.ratings.g;
         for(let i = 0; i < g.length; i++){
-          console.log(g[i]);
           let gif = g[i].images.original.webp;
           table.push(<Gifs gif={gif} />);
         }
@@ -170,7 +166,6 @@ class App extends Component{
       case 'pg':
         let pg = this.state.ratings.pg;
         for(let i = 0; i < pg.length; i++){
-          console.log(pg[i]);
           let gif = pg[i].images.original.webp;
           table.push(<Gifs gif={gif} />);
         }
@@ -178,7 +173,6 @@ class App extends Component{
       case 'pg13':
         let pg13 = this.state.ratings.pg13;
         for(let i = 0; i < pg13.length; i++){
-          console.log(pg13[i]);
           let gif = pg13[i].images.original.webp;
           table.push(<Gifs gif={gif} />);
         }
@@ -186,7 +180,6 @@ class App extends Component{
       case 'r':
         let r = this.state.ratings.r;
         for(let i = 0; i < r.length; i++){
-          console.log(r[i]);
           let gif = r[i].images.original.webp;
           table.push(<Gifs gif={gif} />);
         }
