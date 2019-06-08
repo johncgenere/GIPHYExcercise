@@ -8,7 +8,6 @@ class App extends Component{
     super(props);
 
     this.state = {
-      defaultSearch: 'Trending',
       search: '',
       searchResults: {},
       randomSearch: '',
@@ -36,6 +35,15 @@ class App extends Component{
     this.getRandom = this.getRandom.bind(this);
     this.setRatings = this.setRatings.bind(this);
     this.handleValueChange = this.handleValueChange.bind(this);
+    this.onEnterSearch = this.onEnterSearch.bind(this);
+    this.onSearchGiphy = this.onSearchGiphy.bind(this); // lets user go back from looking at random gif
+  }
+
+  onSearchGiphy = (event) => {
+    let selectValue = '';
+    let random = false;
+    console.log('gif');
+    this.setState({selectValue, random});
   }
 
   handleValueChange = (e) => {
@@ -44,6 +52,23 @@ class App extends Component{
 
   handleSearchInput = (e) => {
     this.setState({search: e.target.value});
+  }
+
+  onEnterSearch  = (event) => {
+    if(event.key === 'Enter'){
+      let search = this.state.search;
+      search = search.toString();
+      axios.get('http://api.giphy.com/v1/gifs/search?q=' + search + '&api_key=mGNzIsuBD7LS9kNIkwTxztRj6jM1N8gB&limit=24')
+        .then(response => {
+          let searchResults = response.data.data;
+          let random = false;
+          let selectValue = '';
+          this.setState({searchResults, random, selectValue});
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    }
   }
 
   getSearch = (event) => {
@@ -76,7 +101,7 @@ class App extends Component{
   putSearch = () => {
     if(this.state.search !== '')
       return this.state.search;
-    return this.state.defaultSearch;
+    return "Nothing";
   }
 
   setRatings = () => {
@@ -178,13 +203,13 @@ class App extends Component{
       return(
         <div className="App">
           <header className="App-header">
-            <h1> Search GIPHY </h1>
-            <div className="ui icon input">
-              <input type="text" placeholder="Search..." onChange={this.handleSearchInput}/>
+            <h1 style={{marginTop: '2%'}} onClick={this.onSearchGiphy} id="random"> Search GIPHY </h1>
+            <div className="ui icon input" style={{width: '30%', fontSize: '25px'}}>
+              <input type="text" placeholder="Search..." onChange={this.handleSearchInput} onKeyPress={this.onEnterSearch}/>
               <i className="inverted circular search link icon" onClick={this.getSearch}></i>
             </div>
-            <button className="ui button" onClick={this.getRandom}> Random Gif </button>
-            <h1> Currently Searching: Random Gif </h1>
+            <button className="ui button" onClick={this.getRandom} style={{margin: '1%', width: '30%'}}> Random Gif </button>
+            <h1 style={{marginBottom: '3%'}}> Currently Searching: Random Gif </h1>
             <Gifs gif={this.state.randomSearch} />
           </header>
         </div>
@@ -194,17 +219,18 @@ class App extends Component{
     return (
       <div className="App">
         <header className="App-header">
-          <h1> Search GIPHY </h1>
-          <div className="ui icon input">
-            <input type="text" placeholder="Search..." onChange={this.handleSearchInput}/>
-            <i className="inverted circular search link icon" onClick={this.getSearch}></i>
+          <h1 style={{marginTop: '2%'}}> Search GIPHY </h1>
+          <div className="ui icon input" style={{width: '30%', fontSize: '25px'}}>
+            <input type="text" placeholder="Search..." onChange={this.handleSearchInput} onKeyPress={this.onEnterSearch}/>
+            <i className="inverted circular search link icon" onClick={this.getSearch} style={{width: '5px', height: '25px'}}></i>
           </div>
-          <button className="ui button" onClick={this.getRandom}> Random Gif </button>
+          <button className="ui button" onClick={this.getRandom} style={{margin: '1%', width: '30%'}}> Random Gif </button>
           <select className="ui dropdown"
                   value={this.state.selectValue}
                   onChange={this.handleValueChange}
-                  onClick={this.setRatings}>
-            <option value="">Select Rating</option>
+                  onClick={this.setRatings}
+                  style={{fontSize: '20px', width: '30%', height: '20%', borderRadius: '5px'}}>
+            <option value="" style= {{color: 'grey'}}>Select Rating</option>
             <option value="y">Y</option>
             <option value="g">G</option>
             <option value="pg">PG</option>
@@ -212,7 +238,7 @@ class App extends Component{
             <option value="r">R</option>
           </select>
 
-          <h1> Currently Searching (Press The Search Icon to Begin Search): {this.putSearch()} </h1>
+          <h1 style={{marginBottom: '3%'}}> Currently Searching: {this.putSearch()} </h1>
           <div className="ui grid container" style={{marginBottom: '3%'}}>
             {table}
           </div>
