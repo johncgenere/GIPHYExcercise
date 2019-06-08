@@ -53,7 +53,8 @@ class App extends Component{
       .then(response => {
         let searchResults = response.data.data;
         let random = false;
-        this.setState({searchResults, random});
+        let selectValue = '';
+        this.setState({searchResults, random, selectValue});
       })
       .catch(err => {
         console.log(err);
@@ -118,16 +119,59 @@ class App extends Component{
     }
 
     this.setState({ratings: newRatings});
-    console.log(newRatings);
   }
 
   render(){
     let table = [];
+    console.log(this.state.ratings);
 
-    for(let i = 0; i < this.state.searchResults.length; i++){
-      let currImage = this.state.searchResults[i];
-      let gif = (currImage.images.original.webp);
-      table.push(<Gifs gif={gif} />);
+    switch (this.state.selectValue) {
+      case 'y':
+        let y = this.state.ratings.y;
+        for(let i = 0; i < y.length; i++){
+          console.log(y[i]);
+          let gif = y[i].images.original.webp;
+          table.push(<Gifs gif={gif} />);
+        }
+        break;
+      case 'g':
+        let g = this.state.ratings.g;
+        for(let i = 0; i < g.length; i++){
+          console.log(g[i]);
+          let gif = g[i].images.original.webp;
+          table.push(<Gifs gif={gif} />);
+        }
+        break;
+      case 'pg':
+        let pg = this.state.ratings.pg;
+        for(let i = 0; i < pg.length; i++){
+          console.log(pg[i]);
+          let gif = pg[i].images.original.webp;
+          table.push(<Gifs gif={gif} />);
+        }
+        break;
+      case 'pg13':
+        let pg13 = this.state.ratings.pg13;
+        for(let i = 0; i < pg13.length; i++){
+          console.log(pg13[i]);
+          let gif = pg13[i].images.original.webp;
+          table.push(<Gifs gif={gif} />);
+        }
+        break;
+      case 'r':
+        let r = this.state.ratings.r;
+        for(let i = 0; i < r.length; i++){
+          console.log(r[i]);
+          let gif = r[i].images.original.webp;
+          table.push(<Gifs gif={gif} />);
+        }
+        break;
+      default:
+        for(let i = 0; i < this.state.searchResults.length; i++){
+          let currImage = this.state.searchResults[i];
+          let gif = (currImage.images.original.webp);
+          table.push(<Gifs gif={gif} />);
+        }
     }
 
     if(this.state.random){
@@ -158,7 +202,8 @@ class App extends Component{
           <button className="ui button" onClick={this.getRandom}> Random Gif </button>
           <select className="ui dropdown"
                   value={this.state.selectValue}
-                  onChange={this.handleValueChange} >
+                  onChange={this.handleValueChange}
+                  onClick={this.setRatings}>
             <option value="">Select Rating</option>
             <option value="y">Y</option>
             <option value="g">G</option>
@@ -166,7 +211,7 @@ class App extends Component{
             <option value="pg13">PG-13</option>
             <option value="r">R</option>
           </select>
-          <button className="ui button" onClick={this.setRatings}> Filter </button>
+
           <h1> Currently Searching (Press The Search Icon to Begin Search): {this.putSearch()} </h1>
           <div className="ui grid container" style={{marginBottom: '3%'}}>
             {table}
